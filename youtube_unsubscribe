@@ -1,0 +1,36 @@
+(async () => {
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+  const buttons = [...document.querySelectorAll(
+    'ytd-subscribe-button-renderer yt-button-shape button'
+  )].filter(b => b.innerText.trim() === 'Subscribed');
+
+  console.log(`Found ${buttons.length} subscriptions`);
+
+  for (const btn of buttons) {
+    btn.click(); // open dropdown
+    await sleep(600);
+
+    // click "Unsubscribe" from dropdown
+    const unsubscribe = [...document.querySelectorAll(
+      'tp-yt-paper-item'
+    )].find(el => el.innerText.includes('Unsubscribe'));
+
+    if (unsubscribe) {
+      unsubscribe.click();
+      await sleep(600);
+
+      // confirm dialog
+      const confirm = [...document.querySelectorAll(
+        'yt-confirm-dialog-renderer button'
+      )].find(b => b.innerText.includes('Unsubscribe'));
+
+      if (confirm) {
+        confirm.click();
+        await sleep(1200);
+      }
+    }
+  }
+
+  console.log('✅ Done unsubscribing from visible channels');
+})();
